@@ -16,8 +16,6 @@ defmodule Sneakers23.Inventory.CompleteProductTest do
       {inventory, data} = Test.Factory.InventoryFactory.complete_products()
       products = CompleteProduct.get_complete_products(inventory)
 
-      IO.puts inspect products
-
       assert [first, second] = products
       assert {first.id, first.sku} == {data.p2.id, data.p2.sku}
       assert {second.id, second.sku} == {data.p1.id, data.p1.sku}
