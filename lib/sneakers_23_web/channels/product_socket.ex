@@ -6,11 +6,11 @@
 # We make no guarantees that this code is fit for any purpose.
 # Visit http://www.pragmaticprogrammer.com/titles/sbsockets for more book information.
 #---
-defmodule Sneakers23Web.UserSocket do
+defmodule Sneakers23Web.ProductSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", Sneakers23Web.RoomChannel
+  channel "product:*", Sneakers23Web.ProductChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After

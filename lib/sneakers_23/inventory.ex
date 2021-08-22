@@ -32,7 +32,9 @@ defmodule Sneakers23.Inventory do
     pid = Keyword.get(opts, :pid, __MODULE__)
 
     %{id: id} = Store.mark_product_released!(product_id)
-    {:ok, _inventory} = Server.mark_product_released!(pid, id)
+    {:ok, inventory} = Server.mark_product_released!(pid, id)
+    {:ok, product} = CompleteProduct.get_product_by_id(inventory, id)
+    Sneakers23Web.notify_product_released(product)
 
     :ok
   end
@@ -43,8 +45,12 @@ defmodule Sneakers23.Inventory do
     pid = Keyword.get(opts, :pid, __MODULE__)
 
     avail = Store.fetch_availability_for_item(item_id)
-    {:ok, _old_inv, _inv} = Server.set_item_availability(pid, avail)
-
+    {:ok, old_inv, inv} = Server.set_item_availability(pid, avail)
+    {:ok, old_item} = CompleteProduct.get_item_by_id(old_inv, item_id)
+    {:ok, item} = CompleteProduct.get_item_by_id(inv, item_id)
+    Sneakers23Web.notify_item_stock_change(
+      previous_item: old_item, current_item: item
+    )
     :ok
   end
 end
