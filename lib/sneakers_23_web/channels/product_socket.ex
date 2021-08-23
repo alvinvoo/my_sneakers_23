@@ -11,6 +11,7 @@ defmodule Sneakers23Web.ProductSocket do
 
   ## Channels
   channel "product:*", Sneakers23Web.ProductChannel
+  channel "cart:*", Sneakers23Web.ShoppingCartChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
