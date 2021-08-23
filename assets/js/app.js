@@ -33,8 +33,12 @@ function setupProductChannel(socket, productId) {
 	})
 }
 
-Cart.setupCartChannel(productSocket, window.cartId, {
+const cartChannel = Cart.setupCartChannel(productSocket, window.cartId, {
 	onCartChange: (newCart) => {
 		dom.renderCartHtml(newCart)
 	}
+})
+
+dom.onItemClick((itemId) => {
+	Cart.addCartItem(cartChannel, itemId)
 })
