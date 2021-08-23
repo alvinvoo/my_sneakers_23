@@ -5,6 +5,9 @@ Cart.setupCartChannel = (socket, cartId, { onCartChange }) => {
   const cartChannel = socket.channel(`cart:${cartId}`, channelParams) 
   const onCartChangeFn = (cart) => {
     console.debug("Cart received", cart)
+    // serialize cart is different from the 64 chars cart id
+    // this is the latest cart that is stored in localStorage
+    // another (frontend) client will use this from the localStorage 
     localStorage.storedCart = cart.serialized
     onCartChange(cart)
   }

@@ -9,7 +9,7 @@ defmodule Sneakers23Web.CartIdPlug do
   end
 
   defp get_cart_id(conn) do
-    # get from browser (not single tab) session
+    # get from server (not single tab) session
     # so even if open multiple tabs, browser still share same session
     case get_session(conn, :cart_id) do
       nil ->
