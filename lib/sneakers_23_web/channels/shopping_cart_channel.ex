@@ -94,7 +94,7 @@ defmodule Sneakers23Web.ShoppingCartChannel do
 	defp broadcast_cart(cart, socket, opts) do
 		{:ok, serialized} = Checkout.export_cart(cart)
 
-		# broadcast to all other clients (except caller)
+		# broadcast to all other clients (except current node)
 		broadcast_from(socket, "cart_updated", %{
 	  	"serialized" => serialized,
 	  	"added" => Keyword.get(opts, :added, []),
