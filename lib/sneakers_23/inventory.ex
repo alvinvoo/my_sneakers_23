@@ -39,6 +39,9 @@ defmodule Sneakers23.Inventory do
 
     unless being_replicated? do
       # shoutout to other nodes
+      # but only the original node does the shouting
+      # that's y inside this `unless` statement
+      # else, other node will start shoutings as well
       Replication.mark_product_released!(product_id)
       {:ok, product} = CompleteProduct.get_product_by_id(inventory, id)
       Sneakers23Web.notify_product_released(product)
@@ -56,15 +59,19 @@ defmodule Sneakers23.Inventory do
 
     avail = Store.fetch_availability_for_item(item_id)
     {:ok, old_inv, inv} = Server.set_item_availability(pid, avail)
+    {:ok, item} = CompleteProduct.get_item_by_id(inv, item_id)
 
     unless being_replicated? do
       Replication.item_sold!(item_id)
       {:ok, old_item} = CompleteProduct.get_item_by_id(old_inv, item_id)
-      {:ok, item} = CompleteProduct.get_item_by_id(inv, item_id)
       Sneakers23Web.notify_item_stock_change(
         previous_item: old_item, current_item: item
       )
     end
+
+    # this function only really gets call when available count is 0 (see the argument pattern matching)
+    Sneakers23Web.notify_local_item_stock_change(item)
+
     :ok
   end
 end
