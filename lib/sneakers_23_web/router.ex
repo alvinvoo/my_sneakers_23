@@ -25,6 +25,7 @@ defmodule Sneakers23Web.Router do
 
   pipeline :admin do
     plug :basic_auth, Application.compile_env(:sneakers_23, :basic_auth)
+    #function plug, as long as argument is conn, and return is conn
     plug :put_layout, {Sneakers23Web.LayoutView, :admin}
   end
 
