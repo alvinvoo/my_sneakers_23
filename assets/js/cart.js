@@ -44,6 +44,7 @@ function cartRequest(cartChannel, event, payload, onSuccess) {
 
 function channelParams() {
   return {
-    serialized: localStorage.storedCart 
+    serialized: localStorage.storedCart,
+    page: window.location.pathname
   }
 }

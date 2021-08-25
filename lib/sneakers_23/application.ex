@@ -16,6 +16,8 @@ defmodule Sneakers23.Application do
       Sneakers23.Repo,
       {Phoenix.PubSub, name: Sneakers23.PubSub},
       Sneakers23Web.Endpoint,
+      {Sneakers23Web.CartTracker,
+        [pool_size: :erlang.system_info(:schedulers_online)]},
       Sneakers23.Inventory,
       Sneakers23.Replication
     ]

@@ -8,7 +8,7 @@ defmodule Sneakers23Web.ShoppingCartChannel do
 	intercept ["cart_updated"]
 
   def join("cart:" <> id, params, socket) when byte_size(id) == 64 do
-	  cart = get_cart(params)
+	  cart = get_cart(params) # params here is the serialized local storage cart
 	  socket = assign(socket, :cart, cart)
     # call itself
     send(self(), :send_cart)
@@ -18,12 +18,37 @@ defmodule Sneakers23Web.ShoppingCartChannel do
 		# 2. unsubscribed when they are removed
 		enqueue_cart_subscriptions(cart)
 
+		socket = socket
+			|> assign(:cart_id, id)
+			|> assign(:page, Map.get(params, "page", nil)) #what page?
+
+		send(self(), :after_join)
+
 	  {:ok, socket}
   end
 
   def join("cart:" <> _id, _params, socket) do
     {:ok, socket}
   end
+
+	def handle_info(:after_join, socket = %{
+		assigns: %{cart: cart, cart_id: id, page: page}
+	}) do
+		{:ok, _} = Sneakers23Web.CartTracker.track_cart(
+			socket, %{cart: cart, id: id, page: page}
+		)
+		{:noreply, socket}
+	end
+
+	# for presence to update cart tracker
+	def handle_info(:update_tracked_cart, socket = %{
+		assigns: %{cart: cart, cart_id: id}
+	}) do
+		{:ok, _} = Sneakers23Web.CartTracker.update_cart(
+	  	socket, %{cart: cart, id: id}
+		)
+		{:noreply, socket}
+	end
 
 	def handle_info({:subscribe, item_id}, socket) do
 		Phoenix.PubSub.subscribe(Sneakers23.PubSub, "item_out:#{item_id}")
@@ -82,6 +107,7 @@ defmodule Sneakers23Web.ShoppingCartChannel do
 		cart = get_cart(params)
 		socket = assign(socket, :cart, cart)
 		push(socket, "cart", cart_to_map(cart))
+		send(self(), :update_tracked_cart)
 
 		{:noreply, socket}
 	end
@@ -92,6 +118,7 @@ defmodule Sneakers23Web.ShoppingCartChannel do
 	end
 
 	defp broadcast_cart(cart, socket, opts) do
+		send(self(), :update_tracked_cart)
 		{:ok, serialized} = Checkout.export_cart(cart)
 
 		# broadcast to all other clients (except current node)
