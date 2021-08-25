@@ -8,6 +8,10 @@
 #---
 use Mix.Config
 
+config :sneakers_23, :basic_auth,
+  username: "admin",
+  password: "password"
+
 # Configure your database
 config :sneakers_23, Sneakers23.Repo,
   username: "alvinvoo",

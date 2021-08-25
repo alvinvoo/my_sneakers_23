@@ -17,6 +17,7 @@ defmodule Sneakers23.Inventory do
     %{
       id: Server,
       start: {Server, :start_link, [[loader_mod: loader, name: name]]}
+      # the last keyword list r the initial values to be passed
     }
   end
 
@@ -29,6 +30,7 @@ defmodule Sneakers23.Inventory do
 
   def mark_product_released!(id), do: mark_product_released!(id, [])
 
+  @spec mark_product_released!(any, keyword) :: :ok
   def mark_product_released!(product_id, opts) do
     pid = Keyword.get(opts, :pid, __MODULE__)
 

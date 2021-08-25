@@ -36,6 +36,7 @@ defmodule Sneakers23.Inventory.Server do
   end
 
   def handle_continue(:load, %{loader_mod: loader_mod}) do
+    #this will be called AFTER initialization
     {:ok, inventory = %Inventory{}} = loader_mod.load()
     {:noreply, inventory}
   end
