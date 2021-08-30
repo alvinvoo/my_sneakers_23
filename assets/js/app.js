@@ -7,15 +7,24 @@
  * Visit http://www.pragmaticprogrammer.com/titles/sbsockets for more book information.
 ***/
 import css from "../css/app.css"
-import { productSocket } from "./socket"
+import { productSocket, connectToLiveView } from "./socket"
 import dom from './dom'
 import Cart from './cart'
 
 productSocket.connect()
 	
-const productIds = dom.getProductIds()
-	
-productIds.forEach((id) => setupProductChannel(productSocket, id))
+console.log("hello here?")
+// LiveView includes data-phx-main on root <div>
+if (document.querySelectorAll("[data-phx-main]").length) {
+	console.log("connected here?")
+	connectToLiveView()
+	//so, instead of listening on released and stock_change channels separately like in setupProductChannel
+	//and having a `dom.js` to change the JS manually
+	//the content of live_index.html.leex change directly due to change in @products
+} else {
+	const productIds = dom.getProductIds()
+	productIds.forEach((id) => setupProductChannel(productSocket, id))
+}
 	
 function setupProductChannel(socket, productId) {
 	const productChannel = socket.channel(`product:${productId}`)

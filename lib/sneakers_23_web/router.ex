@@ -14,9 +14,16 @@ defmodule Sneakers23Web.Router do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_flash
+    plug :put_root_layout, {Sneakers23Web.LayoutView, :app}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug Sneakers23Web.CartIdPlug
+  end
+
+  scope "/", Sneakers23Web do
+    pipe_through :browser
+
+    live "/drops", ProductPageLive
   end
 
   pipeline :api do
