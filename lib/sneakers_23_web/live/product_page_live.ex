@@ -8,8 +8,7 @@ defmodule Sneakers23Web.ProductPageLive do
     assigns)
 	end
 
-	def mount(_params, session ,socket) do
-    IO.puts inspect session
+	def mount(_params, _session ,socket) do
 	  {:ok, products} = Sneakers23.Inventory.get_complete_products()
 	  socket = assign(socket, :products, products)
 
